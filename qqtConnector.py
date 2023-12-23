@@ -1,22 +1,28 @@
+from json import dumps
 from .qqtThread import qqtThreadEscape as TE
 from .qqtDebug import qqtDebug as D
-from inspect import signature
-from json import dumps
+
 
 class qqtConnector(TE):
+    '''
+    qqtConnector is a wrapper for QML.
+    '''
     root = None
-
-    def __init__(self):
-        super().__init__()
 
     @classmethod
     @TE.escape_thread
-    def call(self, name, args):
+    def call(cls, name, args):
+        '''
+        Call a QML function.
+        '''
         try:
-            getattr(self.root, name)(dumps(args))
-        except Exception as e:
+            getattr(cls.root, name)(dumps(args))
+        except RuntimeError as e:
             D("e")("Args:", args)
             D("e")(e)
 
 def call_qml(name, args):
+    '''
+    Call a QML function.
+    '''
     qqtConnector.call(name, args)

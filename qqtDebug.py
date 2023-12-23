@@ -1,9 +1,12 @@
-import colorama
 import sys
 import inspect
+import colorama
 from PyQt5.QtCore import QThread
 
 class qqtDebug:
+    '''
+    qqtDebug is a wrapper for debug messages.
+    '''
     main_thread_id = None
 
     def __init__(self, level="d"):
@@ -16,15 +19,17 @@ class qqtDebug:
             colorama.Fore.GREEN,
             colorama.Fore.RESET,
         ]
-        self.level = "t" if self.is_worker and "t" and level != "e" in sys.argv[1] else level
+        self.level = "t" if self.is_worker and level != "e" and "t" in sys.argv[1] else level
         self.level = "p" if self.main_thread_id is None else self.level
         self.levels = {
             "p": colorama.Fore.LIGHTGREEN_EX + "[pre-start] ",
             "d" : colorama.Fore.LIGHTRED_EX + "[debug] ",
-            "t" : colorama.Fore.LIGHTBLUE_EX + "[thread " + str(int(QThread.currentThreadId()))[:3] + "] ",
+            "t" : colorama.Fore.LIGHTBLUE_EX + "[thread " + 
+                str(int(QThread.currentThreadId()))[:3] + "] ",
             "vv" : colorama.Fore.LIGHTYELLOW_EX + "[vv] ",
             "vvv" : colorama.Fore.RED + "[vvv] ",
-            "e": colorama.Back.RED + colorama.Fore.WHITE + "[error]" + colorama.Fore.RESET + colorama.Back.RESET + " ",
+            "e": colorama.Back.RED + colorama.Fore.WHITE + "[error]" +
+                 colorama.Fore.RESET + colorama.Back.RESET + " ",
         }
 
     def __call__(self, *args, **kwargs):
@@ -50,3 +55,6 @@ class qqtDebug:
                 print(self.colors[i + 2] + str(args[i]), end=" ")
             print(self.colors[-1] + str(args[-1]), end="")
             print(colorama.Fore.RESET)
+            if self.level == "e":
+                print(colorama.Fore.RED + "Exiting..." + colorama.Fore.RESET)
+                sys.exit(1)

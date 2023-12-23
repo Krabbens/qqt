@@ -1,15 +1,20 @@
-from PyQt5.QtCore import *
-from .qqtDebug import qqtDebug as Debug
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
 MAX_THREADS = 1000
 
 class qqtSignalWrapper(QObject):
+    '''
+    qqtSignalWrapper is a wrapper for pyqtSignal.
+    '''
     threadSignal = pyqtSignal(object, object)
 
     def __init__(self):
         QObject.__init__(self)
 
 class qqtThread(QThread):
+    '''
+    qqtThread is a wrapper for QThread.
+    '''
     threadSignal = pyqtSignal(object)
     quitSignal = pyqtSignal(object)
 
@@ -39,6 +44,9 @@ class qqtThread(QThread):
         self.deleteLater()
 
 class qqtThreadWrapper(QThread):
+    '''
+    qqtThreadWrapper is a thread manager.
+    '''
     def __init__(self):
         QThread.__init__(self)
         self.threads = {}        
@@ -55,7 +63,10 @@ class qqtThreadWrapper(QThread):
                 return var
         return self
 
-    def future(*args, **kwargs):
+    def future(*args, **kwargs): # pylint: disable=E0213
+        '''
+        Decorator for threads.
+        '''
         def decorator(func):
             def wrap(self, *_args):
                 targetSelf = self.getInstance(vars(self), kwargs["target"])
