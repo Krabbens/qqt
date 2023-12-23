@@ -1,15 +1,7 @@
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
+from .qqtSignalWrapper import qqtSignalWrapper
 
 MAX_THREADS = 1000
-
-class qqtSignalWrapper(QObject):
-    '''
-    qqtSignalWrapper is a wrapper for pyqtSignal.
-    '''
-    threadSignal = pyqtSignal(object, object)
-
-    def __init__(self):
-        QObject.__init__(self)
 
 class qqtThread(QThread):
     '''

@@ -8,6 +8,7 @@ from .qqtDebug import qqtDebug
 from .qqtThread import qqtThreadWrapper
 from .qqtCallback import qqtCallback
 from .qqtConnector import qqtConnector
+from .qqtEngineManager import qqtEngineManager
 
 os.environ["QT_QUICK_CONTROLS_STYLE"] = "Material"
 just_fix_windows_console()
@@ -24,12 +25,19 @@ class qqtApp(qqtThreadWrapper):
         self.app = QGuiApplication(sys.argv)
         self.callback = qqtCallback()
         self.connector = qqtConnector()
+        self.create_engine()
+
+    def create_engine(self):
+        '''
+        Create QQmlApplicationEngine.
+        '''
+        self.engine = QQmlApplicationEngine()
+        qqtEngineManager.set_engine(self.engine)
 
     def init(self):
         '''
-        Initialize QGuiApplication and QQmlApplicationEngine.
+        Initialize QGuiApplication.
         '''
-        self.engine = QQmlApplicationEngine()
         ctx = self.engine.rootContext()
         ctx.setContextProperty('callback', self.callback)
         self.engine.load(os.path.join(os.path.dirname(sys.argv[0]), "main.qml"))
