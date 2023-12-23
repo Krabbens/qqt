@@ -23,8 +23,6 @@ The core of this framework revolves around the following components:
 - **Usage:** `@qqtThreadWrapper.future`
 - **Description:** This class provides a robust mechanism for handling multiple threads within the application. It manages thread creation, execution, and termination. The `@future` decorator simplifies the creation and management of threads, enabling the execution of functions concurrently, enhancing the application's efficiency.
 
-Certainly! To install this framework, follow these steps:
-
 ### Installation
 
 1. **Clone the Repository**
