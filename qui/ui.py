@@ -15,7 +15,6 @@ class UI(qqtDictModel):
         
         self.ui.update(self.palette)
         self.ui.update(self.spacing)
-        print(self.ui)
 
         super().__init__("ui", list(self.ui.keys()))
         self.set_dict(self.ui)

@@ -9,6 +9,7 @@ from .qqtThread import qqtThreadWrapper
 from .qqtCallback import qqtCallback
 from .qqtConnector import qqtConnector
 from .qqtEngineManager import qqtEngineManager
+from .qqtModel import qqtModel
 
 os.environ["QT_QUICK_CONTROLS_STYLE"] = "Material"
 just_fix_windows_console()
@@ -17,15 +18,17 @@ class qqtApp(qqtThreadWrapper):
     '''
     qqtApp is a wrapper for QGuiApplication and QQmlApplicationEngine.
     '''
-    def __init__(self):
+    def __init__(self, entry_qml="main.qml"):
         super().__init__()
         qqtDebug.main_thread_id = int(QThread.currentThreadId())
         qqtDebug()("qqtApp.__init__")
+        self.entry_qml = entry_qml
         self.engine = None
         self.app = QGuiApplication(sys.argv)
         self.callback = qqtCallback()
         self.connector = qqtConnector()
         self.create_engine()
+        
 
     def create_engine(self):
         '''
@@ -40,7 +43,7 @@ class qqtApp(qqtThreadWrapper):
         '''
         ctx = self.engine.rootContext()
         ctx.setContextProperty('callback', self.callback)
-        self.engine.load(os.path.join(os.path.dirname(sys.argv[0]), "main.qml"))
+        self.engine.load(os.path.join(os.path.dirname(sys.argv[0]), self.entry_qml))
         qqtConnector.root = self.engine.rootObjects()[0]
         
     def run(self):
@@ -48,4 +51,9 @@ class qqtApp(qqtThreadWrapper):
         Run QGuiApplication.
         '''
         self.init()
+
+        for obj in self.engine.rootObjects()[0].children():
+            if obj.property("shadow") is not None:
+                self.shadowModel.add_items([{"source": obj}])
+
         sys.exit(self.app.exec())

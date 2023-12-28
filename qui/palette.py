@@ -11,3 +11,9 @@ palette = {
             "war-50": "#312107", "war-100": "#62420E", "war-200": "#936316", "war-300": "#C4841D", "war-400": "#F5A524", "war-500": "#F7B750", "war-600": "#F9C97C", "war-700": "#FBDBA7", "war-800": "#FDEDD3", "war-900": "#FEFCE8",
             "dan-50": "#310413", "dan-100": "#610726", "dan-200": "#920B3A", "dan-300": "#C20E4D", "dan-400": "#F31260", "dan-500": "#F54180", "dan-600": "#F871A0", "dan-700": "#FAA0BF", "dan-800": "#FDD0DF", "dan-900": "#FEE7EF",
         }
+
+def print_palette():
+    print("Palette length:", len(palette))
+    print("Palette:")
+    for key, value in palette.items():
+        print(key, value)
