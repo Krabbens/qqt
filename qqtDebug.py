@@ -11,7 +11,9 @@ class qqtDebug:
 
     def __init__(self, level="d"):
         self.debug = len(sys.argv) > 1 and "d" in sys.argv[1]
-        self.is_worker = int(QThread.currentThreadId()) != self.main_thread_id
+        current_thread = QThread.currentThread()
+        current_thread_id = id(current_thread) if current_thread else None
+        self.is_worker = current_thread_id is not None and current_thread_id != self.main_thread_id
         self.colors = [
             colorama.Fore.LIGHTRED_EX,
             colorama.Fore.RED,
@@ -19,13 +21,13 @@ class qqtDebug:
             colorama.Fore.GREEN,
             colorama.Fore.RESET,
         ]
-        self.level = "t" if self.is_worker and level != "e" and "t" in sys.argv[1] else level
+        self.level = "t" if self.is_worker and level != "e" and len(sys.argv) > 1 and "t" in sys.argv[1] else level
         self.level = "p" if self.main_thread_id is None else self.level
         self.levels = {
             "p": colorama.Fore.LIGHTGREEN_EX + "[pre-start] ",
             "d" : colorama.Fore.LIGHTRED_EX + "[debug] ",
             "t" : colorama.Fore.LIGHTBLUE_EX + "[thread " + 
-                str(int(QThread.currentThreadId()))[:3] + "] ",
+                str(id(QThread.currentThread()))[:3] + "] ",
             "vv" : colorama.Fore.LIGHTYELLOW_EX + "[vv] ",
             "vvv" : colorama.Fore.RED + "[vvv] ",
             "e": colorama.Back.RED + colorama.Fore.WHITE + "[error]" +
@@ -33,7 +35,7 @@ class qqtDebug:
         }
 
     def __call__(self, *args, **kwargs):
-        if self.debug and self.level in sys.argv[1]:
+        if self.debug and len(sys.argv) > 1 and self.level in sys.argv[1]:
             stack = inspect.stack()
             if "self" in stack[1][0].f_locals:
                 caller_cls = stack[1][0].f_locals["self"].__class__.__name__
