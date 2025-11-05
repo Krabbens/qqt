@@ -20,13 +20,15 @@ class qqtApp(qqtThreadWrapper):
     '''
     def __init__(self, entry_qml="main.qml"):
         super().__init__()
-        qqtDebug.main_thread_id = int(QThread.currentThreadId())
+        current_thread = QThread.currentThread()
+        qqtDebug.main_thread_id = id(current_thread) if current_thread else None
         qqtDebug()("qqtApp.__init__")
         self.entry_qml = entry_qml
         self.engine = None
         self.app = QGuiApplication(sys.argv)
         self.callback = qqtCallback()
         self.connector = qqtConnector()
+        self.shadowModel = None
         self.create_engine()
         
 
@@ -52,8 +54,9 @@ class qqtApp(qqtThreadWrapper):
         '''
         self.init()
 
-        for obj in self.engine.rootObjects()[0].children():
-            if obj.property("shadow") is not None:
-                self.shadowModel.add_items([{"source": obj}])
+        if self.shadowModel is not None:
+            for obj in self.engine.rootObjects()[0].children():
+                if obj.property("shadow") is not None:
+                    self.shadowModel.add_items([{"source": obj}])
 
         sys.exit(self.app.exec())
