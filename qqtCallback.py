@@ -40,11 +40,8 @@ class qqtCallback(TW):
     @TW.future(target=call)
     def future_call(self, name, args): pass
 
-def qcallback(self):
+def qcallback(func):
     '''
     Decorator for callbacks.
     '''
-    qqtDebug()(self)
-    def _callback(func):
-        return qqtCallback.register(func)
-    _callback(self)
+    return qqtCallback.register(func)
