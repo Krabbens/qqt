@@ -21,7 +21,7 @@ class qqtModel(QAbstractListModel):
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
         row = index.row()
-        if index.isValid() and 0 <= row <= self.rowCount():
+        if index.isValid() and 0 <= row < self.rowCount():
             for i in range(self._num_of_roles):
                 if role == self.__getattribute__(f"role_{i+1}"):
                     return self.items[row][self._keys[i]]            
@@ -88,9 +88,16 @@ class qqtDictModel(QAbstractListModel):
     
     @pyqtSlot(str, result="QVariant")
     def get(self, row):
-        print(row)
+        # Convert string to int if needed, or use as-is if it's a valid key
+        try:
+            row_int = int(row)
+            if row_int in self.items:
+                return self.items[row_int]
+        except (ValueError, TypeError):
+            pass
         if row in self.items:
             return self.items[row]
+        return None
         
     def set_dict(self, items):
         self.beginResetModel()
